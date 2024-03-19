@@ -1,0 +1,5 @@
+To-do This Week:
+    1. Wireframes
+    2. Use Case Diagram
+    3. Plan Weekly Team Meetings
+    4. Complete Lab 9 Project Proposal
