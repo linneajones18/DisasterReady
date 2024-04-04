@@ -11,7 +11,7 @@ services:
   web:
     image: node:lts
     user: 'node'
-    working_dir: /home/node/app
+    working_dir: /repository
     env_file: .env
     environment:
       - NODE_ENV=development
@@ -20,7 +20,7 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - ./src:/home/node/app
-    command: 'npm start'
+      - ./:/repository
+    command: 'npm start' #TODO: change the command to `npm run testandrun` to run mocha
 volumes:
   group-project:
