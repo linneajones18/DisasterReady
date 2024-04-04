@@ -1,0 +1,7 @@
+Meeting 02 (April 1st):
+- project setup work division 
+    - database setup
+    - Project Setup like docker compose, database setup, stories, proper tickets.
+    - find more and assign amongst the teammates
+    by next week, setup should be done and create and assign the must have features from Project Guide
+- Questions resolved about Lab 9 misgrading
