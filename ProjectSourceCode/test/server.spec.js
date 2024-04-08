@@ -71,9 +71,7 @@ describe('Testing Register API', () => {
   });
 });
 
-
-//ADD 2 MORE TEST CASES ON APIs OTHER THAN REGISTER
-
+// /login API test
 describe('Testing Login API', () => {
   // Positive Testcase :
   // API: /login
