@@ -34,7 +34,7 @@ describe('Server!', () => {
 describe('Testing Register API', () => {
   // Positive Testcase :
   // API: /register
-  // Input: {username: 'johndoe', password: 'jd123'}
+  // Input: {email: 'johndoe', password: 'jd123'}
   // Expect: res.status == 200 and res.body.message == 'Success'
   // Result: This test case should pass and return a status 200 along with a "Success" message.
   // Explanation: The testcase will call the /register API with the following input
@@ -43,7 +43,7 @@ describe('Testing Register API', () => {
     chai
     .request(server)
     .post('/register')
-    .send({username: 'johndoe', password: 'jd123'})
+    .send({email: 'johndoe', password: 'jd123'})
     .end((err, res) => {
       expect(res).to.have.status(200);
       expect(res.body.message).to.equals('Success');
@@ -53,7 +53,7 @@ describe('Testing Register API', () => {
 
   // Negative Testcase :
   // API: /register
-  // Input: {username: 10, password: 'hey'}
+  // Input: {email: 10, password: 'hey'}
   // Expect: res.status == 400 and res.body.message == 'Invalid input'
   // Result: This test case should pass and return a status 400 along with a "Invalid input" message.
   // Explanation: The testcase will call the /register API with the following invalid inputs
@@ -62,7 +62,7 @@ describe('Testing Register API', () => {
     chai
       .request(server)
       .post('/register')
-      .send({username: 10, password: 'hey'})
+      .send({email: 10, password: 'hey'})
       .end((err, res) => {
         expect(res).to.have.status(400);
         expect(res.body.message).to.equals('Invalid input');
@@ -73,3 +73,43 @@ describe('Testing Register API', () => {
 
 
 //ADD 2 MORE TEST CASES ON APIs OTHER THAN REGISTER
+
+describe('Testing Login API', () => {
+  // Positive Testcase :
+  // API: /login
+  // Input: {email: 'johndoe@gmail.com', password: 'jd123'}
+  // Expect: res.status == 200 and res.body.message == 'Success'
+  // Result: This test case should pass and return a status 200 along with a "Success" message.
+  // Explanation: The testcase will call the /login API with the following input
+  // and expects the API to return a status of 200 along with the "Success" message.
+  it('positive : /login', done => {
+    chai
+    .request(server)
+    .post('/login')
+    .send({email: 'johndoe@gmail.com', password: 'jd123'})
+    .end((err, res) => {
+      expect(res).to.have.status(200);
+      expect(res.body.message).to.equals('Success');
+      done();
+    });
+  });
+
+  // Negative Testcase :
+  // API: /login
+  // Input: {username: '12', password: 'hey'}
+  // Expect: res.status == 400 and res.body.message == 'Invalid input'
+  // Result: This test case should pass and return a status 400 along with a "Invalid input" message.
+  // Explanation: The testcase will call the /login API with the following invalid inputs
+  // and expects the API to return a status of 400 along with the "Invalid input".
+  it('Negative : /login. Checking invalid name', done => {
+    chai
+      .request(server)
+      .post('/login')
+      .send({email: 12, password: 'hey'})
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body.message).to.equals('Invalid input');
+        done();
+      });
+  });
+});
