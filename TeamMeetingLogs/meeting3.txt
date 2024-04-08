@@ -1,2 +1,5 @@
 Meeting 03 (April 8th):
 
+- Must-haves for app need to be implemented by next week
+- Team was stopped up by docker troubles, but now is fixed
+- Currently finishing test cases for Lab 11 and will begin testing once that is finished and base pages are created
