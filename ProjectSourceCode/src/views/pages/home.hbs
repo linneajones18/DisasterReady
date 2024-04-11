@@ -1,6 +1,5 @@
 
-<html>
-    {{!-- maybe add this to the CSS file? idk man i am not sure what i am doing heheheh --}}
+{{!-- maybe add this to the CSS file? idk man i am not sure what i am doing heheheh --}}
 <style> 
     .uniform-btn {
         --bs-btn-padding-y: 3rem;
@@ -9,6 +8,7 @@
         width: 600px; /* Adjust the width as needed */
         text-align: center; /* Center the text within the button */
     }
+
     .hover-color {
         background-color: #5D0E41; /* Specify your desired hover color */
         color: #fff; /* Text color for better contrast */
@@ -19,35 +19,40 @@
         background-color: #99407a; /* Specify your desired hover color */
         color: #fff; /* Text color for better contrast */
     }
+
+    #nav_buttons_container {
+        text-align: right; /* Align content to the right */
+        margin-right: 20px; /* Adjust margin as needed */
+    }
 </style>
+<div id="nav_buttons_container">
+<br>
     <div id="report_button">
-        {{!-- Make sure to fix refrence so it goes to "/reports" --}}
-        <a href="/login" class="btn btn-primary uniform-btn hover-color">
+        <!-- Make sure to fix reference so it goes to "/reports" -->
+        <a href="/reports" class="btn btn-primary uniform-btn hover-color">
             Make a Report
         </a>
     </div>
     <br>
     <div id="alert_button">
-        {{!-- Make sure to fix refrence so it goes to "/alerts" --}}
-        <a href="/login" class="btn btn-primary uniform-btn hover-color">
+        <!-- Make sure to fix reference so it goes to "/alerts" -->
+        <a href="/alerts" class="btn btn-primary uniform-btn hover-color">
             Check Alerts
         </a>
     </div>
     <br>
     <div id="resource_button">
-        {{!-- Make sure to fix refrence so it goes to "/resources" --}}
-        <a href="/login" class="btn btn-primary uniform-btn hover-color">
+        <!-- Make sure to fix reference so it goes to "/resources" -->
+        <a href="/resources" class="btn btn-primary uniform-btn hover-color">
             View Resources
         </a>
     </div>
     <br>
     <div id="map_button">
-        {{!-- Make sure to fix refrence so it goes to "/map" --}}
-        <a href="/login" class="btn btn-primary uniform-btn hover-color">
+        <!-- Make sure to fix reference so it goes to "/map" -->
+        <a href="/map" class="btn btn-primary uniform-btn hover-color">
             Look at the map
         </a>
     </div>
-
-</html>
-
+</div>
 {{>footer}}
