@@ -92,9 +92,9 @@ app.get('/register', (req, res) =>
 app.post('/register', async (req, res) =>
 {
     const hash = await bcrypt.hash(req.body.password, 10);
-    let response = await db.any('INSERT INTO users VALUES ($1, $2);', [req.body.username, hash]);
+    let response = await db.any('INSERT INTO users VALUES ($1, $2);', [req.body.email, hash]);
     if(response.err){
-        res.redirect('/register', {message: `Username or password already taken.`});
+        res.redirect('/register', {message: `Email or password already taken.`});
     }
     else {
         res.redirect('/login');
@@ -116,17 +116,17 @@ app.get('/home', (req, res) =>
 app.post('/login', async (req, res) =>
 {
   //WORKING!
-  let user = await db.oneOrNone('SELECT * FROM users WHERE username = $1 LIMIT 1;', [req.body.username]);
+  let user = await db.oneOrNone('SELECT * FROM users WHERE email = $1 LIMIT 1;', [req.body.email]);
   if(user != undefined){
     //check if password matches
     const match = await bcrypt.compare(req.body.password, user.password);
     if(match) {
       req.session.user = user;
       req.session.save();
-      res.redirect('/');// change to /home later 
+      res.redirect('/home');
     }
     else {
-      res.render('pages/login', {message: `Incorrect username or password.`});
+      res.render('pages/login', {message: `Incorrect email or password.`});
     }
   }
   //the user doesn't exist
