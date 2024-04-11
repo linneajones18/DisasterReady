@@ -2,11 +2,36 @@
 <html>
 <h1> Current Reports For Review:</h1>
     <div id="Report">
-        <a>
+        <table>
+            <tr>
+                <th>Course ID</th>
+                <th>Course Name</th>
+                <th>Credit Hours</th>
+                <th></th>
+            </tr>
             {{!-- using "this" and loop to gather all reports and add post/deny button to each--}}
-        </a>
+            {{#each report}}
+            <tr>
+                <td>{{course_id}}</td>    
+                <td>{{course_name}}</td>
+                <td>{{credit_hours}}</td>
+                <td>
+                    {{#if resolved}}
+                    <form method="post" action="/courses/add">
+                        <input type="hidden" name="course_id" value={{course_id}}>
+                        <button type="button" value="disabled" disabled>Add</button>
+                    </form>
+                    {{else}}
+                    <form method="post" action="/courses/add">
+                        <input type="hidden" name="course_id" value={{course_id}}>
+                        <button type="submit" >Add</button>
+                    </form>
+                    {{/if}}
+                </td>
+            </tr>
+            {{/each}}  
+        </table>
     </div>
-
 </html>
 
 {{>footer}}
