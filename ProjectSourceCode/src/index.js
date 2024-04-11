@@ -106,6 +106,13 @@ app.get('/login', (req, res) =>
   res.render('pages/login');
 });
 
+//only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
+app.get('/home', (req, res) => 
+{
+  res.render('pages/home');
+});
+
+
 app.post('/login', async (req, res) =>
 {
   //WORKING!
@@ -116,7 +123,7 @@ app.post('/login', async (req, res) =>
     if(match) {
       req.session.user = user;
       req.session.save();
-      res.redirect('/discover');
+      res.redirect('/');// change to /home later 
     }
     else {
       res.render('pages/login', {message: `Incorrect username or password.`});
