@@ -107,6 +107,7 @@ app.get('/login', (req, res) =>
 });
 
 //only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
+//error here because you are dumb, if you get rid of this it will not let you go home bc you are a failure and you have messed up everything you are an embarrasment to the community as a whole who the hell said you could software develop like what the hell
 app.get('/home', (req, res) => 
 {
   res.render('pages/home');
