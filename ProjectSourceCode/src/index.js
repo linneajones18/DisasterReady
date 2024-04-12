@@ -74,6 +74,7 @@ app.use(
 // <!-- Section 4 : API Routes -->
 // *****************************************************
 
+//used to test that test functions are set up correctly
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
@@ -115,7 +116,6 @@ app.get('/home', (req, res) =>
 
 app.post('/login', async (req, res) =>
 {
-  //WORKING!
   let user = await db.oneOrNone('SELECT * FROM users WHERE email = $1 LIMIT 1;', [req.body.email]);
   if(user != undefined){
     //check if password matches

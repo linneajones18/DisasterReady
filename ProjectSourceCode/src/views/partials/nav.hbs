@@ -16,7 +16,7 @@
       <a class="navbar-brand" href="/"></a>
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-            <a class = "navbar-link" href= '/'>Home</a>
+            <a class = "navbar-link" href= '/home'>Home</a>
         </li>
       </ul>
     </div>
@@ -24,11 +24,15 @@
     <div class="navbar-collapse collapse order-3 dual-collapse2">
       <ul class="navbar-nav ml-auto">
           <li class="nav-item">
+            
           {{!-- if logged in the email on top right redirects to profile page --}}
-          {{!-- NEEDS TO BE TESTED ONCE WE ARE ABLE TO LOGIN --}}
-          {{#if email}}
-            <a class="navbar-link" href="/profile">{{email}}</a>
-          {{/if}}
+          {{!-- {{#if user}} --}}
+            {{!-- <a class="navbar-link" href="/profile">{{email}}</a> --}}
+            {{!-- <h1>{{user.email}}</h1> --}}
+          {{!-- {{/if}} --}}
+
+          {{!-- This is temporary, it will be more customized once I figure it out but until then at least this will allow users to logout --}}
+            <a class="navbar-link" href='/logout' >Logout</a>
           </li>
       </ul>
     </div>
