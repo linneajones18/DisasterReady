@@ -107,6 +107,11 @@ app.get('/login', (req, res) =>
   res.render('pages/login');
 });
 
+app.get('/profile', (req, res) => 
+{
+  res.render('pages/profile');
+});
+
 //only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
 app.get('/home', (req, res) => 
 {
@@ -149,7 +154,8 @@ app.use(auth);
 
 app.get('/logout', (req, res) => {
   req.session.destroy();
-  res.render('pages/logout');
+  res.render('pages/login');
+  //we should add a message here that says logged out successfully
 });
 
 // *****************************************************

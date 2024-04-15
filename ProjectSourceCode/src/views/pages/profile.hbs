@@ -1,0 +1,45 @@
+<!doctype html>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<style>
+
+</style>
+
+<div class="card" style="width: 25rem; height:33rem; background-color:#87CEEB">
+  {{!-- <img class="card-img-top" src="..." alt="Card image cap"> --}}
+  <h2>THEY WILL GET TO CHOOSE A PROFILE PICTURE HERE</h2>
+  <br><br><br><br>
+  <div class="card-body">
+    {{!-- if user has input their name it will show up, otherwise they will appear as "new user" --}}
+    {{!-- needs to be tested of course but hopefully this works --}}
+    {{#if name}}
+        <h4 id="user-name" class="card-title">{{name}}</h5>
+    {{else}}
+        <h4 id="user-name" class="card-title">New User</h5>
+    {{/if}}
+
+    {{!-- if user has input a location it will appear - otherwise it will just say Earth --}}
+    {{#if location}}
+        <h6 id="user-location" class="card-text">{{location}}</h6>
+    {{else}}
+        <h6 id="user-location" class="card-text">Earth</h6>
+    {{/if}}
+
+    {{#if bio}}
+        <p id="user-bio" class="card-text">{{bio}}</p>
+    {{else}}
+        <p id="user-bio" class="card-text">Click 'Edit Profile' to add a bio and to specify your location</p>
+    {{/if}}
+
+    <a href="#" class="btn btn-primary">Edit Profile</a>
+    <a href='/logout' class="btn btn-primary">Logout</a>
+  </div>
+</div>
