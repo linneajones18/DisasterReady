@@ -107,11 +107,6 @@ app.get('/login', (req, res) =>
   res.render('pages/login');
 });
 
-app.get('/profile', (req, res) => 
-{
-  res.render('pages/profile');
-});
-
 //only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
 app.get('/home', (req, res) => 
 {
@@ -140,6 +135,7 @@ app.post('/login', async (req, res) =>
   }
 });
 
+
 // Authentication Middleware.
 const auth = (req, res, next) => {
   if (!req.session.user) {
@@ -151,6 +147,21 @@ const auth = (req, res, next) => {
 
 // Authentication Required
 app.use(auth);
+
+app.get('/profile', (req, res) => 
+{
+  res.render('pages/profile');
+});
+
+app.get('/editProfile', async (req, res) =>
+{
+  res.render('pages/editProfile');
+});
+
+app.post('/editProfile', async (req, res) =>
+{
+  let response = await db.any(`INSERT INTO users(name, location, bio) VALUES ($1, $2, $3) WHERE email=$4 LIMIT 1;`, [req.body.name, req.body.location, req.body.bio, req.session.user.email]);
+});
 
 app.get('/logout', (req, res) => {
   req.session.destroy();
