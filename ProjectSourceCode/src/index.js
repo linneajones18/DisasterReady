@@ -74,6 +74,7 @@ app.use(
 // <!-- Section 4 : API Routes -->
 // *****************************************************
 
+//used to test that test functions are set up correctly
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
@@ -106,17 +107,8 @@ app.get('/login', (req, res) =>
   res.render('pages/login');
 });
 
-//only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
-//error here because you are dumb, if you get rid of this it will not let you go home bc you are a failure and you have messed up everything you are an embarrasment to the community as a whole who the hell said you could software develop like what the hell
-app.get('/home', (req, res) => 
-{
-  res.render('pages/home');
-});
-
-
 app.post('/login', async (req, res) =>
 {
-  //WORKING!
   let user = await db.oneOrNone('SELECT * FROM users WHERE email = $1 LIMIT 1;', [req.body.email]);
   if(user != undefined){
     //check if password matches
@@ -124,7 +116,7 @@ app.post('/login', async (req, res) =>
     if(match) {
       req.session.user = user;
       req.session.save();
-      res.redirect('/home');
+      res.render('pages/home');
     }
     else {
       res.render('pages/login', {message: `Incorrect email or password.`});
