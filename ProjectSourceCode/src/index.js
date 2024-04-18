@@ -61,6 +61,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
+    login: false,
   })
 );
 
@@ -107,6 +108,17 @@ app.get('/login', (req, res) =>
   res.render('pages/login');
 });
 
+app.get('/home', (req, res) => 
+{
+  if(req.session.login){
+    res.render('pages/home');
+  }
+  else {
+    res.redirect('/login');
+  }
+  
+});
+
 app.post('/login', async (req, res) =>
 {
   let user = await db.oneOrNone('SELECT * FROM users WHERE email = $1 LIMIT 1;', [req.body.email]);
@@ -115,8 +127,9 @@ app.post('/login', async (req, res) =>
     const match = await bcrypt.compare(req.body.password, user.password);
     if(match) {
       req.session.user = user;
+      req.session.login = true;
       req.session.save();
-      res.render('pages/home');
+      res.redirect('/home');// so this works only if you're getting there from logged in
     }
     else {
       res.render('pages/login', {message: `Incorrect email or password.`});
@@ -126,6 +139,27 @@ app.post('/login', async (req, res) =>
   else {
     res.redirect('/register');
   }
+});
+
+//This is how you can get to the other pages and whatnot.
+app.get('/alerts', (req, res) => 
+{
+  res.render('pages/alerts');
+});
+
+app.get('/report', (req, res) => 
+{
+  res.render('pages/report');
+});
+
+app.get('/resources', (req, res) => 
+{
+  res.render('pages/resources');
+});
+
+app.get('/map', (req, res) => 
+{
+  res.render('pages/map');
 });
 
 // Authentication Middleware.

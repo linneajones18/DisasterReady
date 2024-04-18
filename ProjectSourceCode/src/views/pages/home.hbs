@@ -2,10 +2,10 @@
 {{!-- maybe add this to the CSS file? idk man i am not sure what i am doing heheheh --}}
 <style> 
     .uniform-btn {
-        --bs-btn-padding-y: 3rem;
-        --bs-btn-padding-x: 7rem;
+        --bs-btn-padding-y: 2.7rem;
+        --bs-btn-padding-x: 5rem;
         --bs-btn-font-size: 2rem;
-        width: 600px;
+        width: 500px;
         text-align: center; 
     }
 
@@ -25,10 +25,33 @@
         margin-right: 20px; 
     }
 </style>
+
+{{!-- This is broken!!!!!!!!!!!!!!!! --}}
+<div id = "Map projection"> 
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuAu9ExnoZHAZVIXDyCZcvhx8L95KH3Cs&callback=initMap"></script>
+    <script>
+    function initMap() {
+    var mapOptions = {
+        center: new google.maps.LatLng(40.014984, -105.270546),
+        zoom: 13,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    var marker = new google.maps.Marker({
+        position: mapOptions.center,
+        map: map,
+        title: 'Location'
+    });
+    }
+    </script>
+</div>
+
 <div id="nav_buttons_container">
 <br>
     <div id="report_button">
-        <a href="/reports" class="btn btn-primary uniform-btn hover-color">
+        <a href="/report" class="btn btn-primary uniform-btn hover-color">
             Make a Report
         </a>
     </div>
@@ -51,4 +74,3 @@
         </a>
     </div>
 </div>
-{{>footer}}
