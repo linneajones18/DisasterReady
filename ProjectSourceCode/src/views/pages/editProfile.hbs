@@ -15,19 +15,23 @@
     }
 </style>
 
-<div class="card" style="width: 25rem; height:33rem; background-color:#87CEEB; margin-left:20px">
+<br>
+
+<div class="card" style="width: 25rem; height:39rem; background-color:#87CEEB; margin-left:20px">
+    <br>
+    <img class="card-img-top" src="https://fivepointsdentalnj.com/wp-content/uploads/2015/11/anonymous-user.png" style="height: 300px; width: auto; align-self: center;">
     <form method="post" action="/editProfile">
         <div class="mb-auto px-5">
-            <label for="name" class="form-label">Name:</label>
+            <label for="name" class="form-label" style="font-weight:bold">Name:</label>
             <input type="text" class="form-control" name="name"/>
-            <label for="location" class="form-label">Location:</label>
+            <label for="location" class="form-label" style="font-weight:bold">Location:</label>
             <input type="text" class="form-control" name="location"/>
-            <label for="bio" class="form-label">Bio:</label>
+            <label for="bio" class="form-label" style="font-weight:bold">Bio:</label>
             <input type="text" class="form-control" name="bio"/>
         </div>
         <div class="mb-auto px-5">
             <br>
-            <button id="save_button" type="submit" class="btn btn-primary">Save changes</button>
+            <button id="save_button" type="submit" class="btn btn-block btn-outline-light" style="background-color:#00224D">Save changes</button>
         </div>
     </form>
 
@@ -40,7 +44,7 @@
 
 
 
-<form method="post" action="/editProfile" id="profile_editor" class="hidden">
+{{!-- <form method="post" action="/editProfile" id="profile_editor" class="hidden">
     <div class="mb-auto px-5">
         <label for="name" class="form-label">Name:</label>
         <input type="text" class="form-control" name="name"/>
@@ -53,15 +57,4 @@
         <br>
         <button id="submit_edits_button" type="submit" class="btn btn-primary">Save</button>
     </div>
-</form>
-
-<script>
-    var editProfileButton = document.getElementById('openFormButton');
-    var form = document.getElementById('profile_editor');
-
-    editProfileButton.addEventListener('click', function() {
-        // Toggle the visibility of the form
-        form.classList.toggle('hidden');
-    });
-
-</script>
+</form> --}}
