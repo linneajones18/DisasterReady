@@ -190,47 +190,43 @@ app.get('/adminalerts', (req, res) => {
 });
 
 app.post('/adminalerts/approve', (req, res) => {
-  //const course_id = parseInt(req.body.course_id);
+  const report_id = parseInt(req.body.id);
   
+  //updating approval for report, setting "resolved" to true so it may be posted on the reports page
   db.tx(async t => {
-    // This transaction will continue iff the student has satisfied all the
-    // required prerequisites.
     const {num_prerequisites} = await t.one(
-      `SELECT
-        num_prerequisites
-       FROM
-        course_prerequisite_count
-       WHERE
-        course_id = $1`,
-      [course_id]
+      `UPDATE incident_reports
+       SET resolved = 1
+       WHERE id = $1`,
+      [report_id]
     );
 
-    if (num_prerequisites > 0) {
-      // This returns [] if the student has not taken any prerequisites for
-      // the course.
-      const [row] = await t.any(
-        `SELECT
-              num_prerequisites_satisfied
-            FROM
-              student_prerequisite_count
-            WHERE
-              course_id = $1
-              AND student_id = $2`,
-        [course_id, req.session.user.student_id]
-      );
+    // if (num_prerequisites > 0) {
+    //   // This returns [] if the student has not taken any prerequisites for
+    //   // the course.
+    //   const [row] = await t.any(
+    //     `SELECT
+    //           num_prerequisites_satisfied
+    //         FROM
+    //           student_prerequisite_count
+    //         WHERE
+    //           course_id = $1
+    //           AND student_id = $2`,
+    //     [course_id, req.session.user.student_id]
+    //   );
 
-      if (!row || row.num_prerequisites_satisfied < num_prerequisites) {
-        throw new Error(`Prerequisites not satisfied for course ${course_id}`);
-      }
-    }
+    //   if (!row || row.num_prerequisites_satisfied < num_prerequisites) {
+    //     throw new Error(`Prerequisites not satisfied for course ${course_id}`);
+    //   }
+    // }
 
     // There are either no prerequisites, or all have been taken.
-    await t.none(
-      'INSERT INTO student_courses(course_id, student_id) VALUES ($1, $2);',
-      [course_id, req.session.user.student_id]
-    );
+    // await t.none(
+    //   'INSERT INTO student_courses(course_id, student_id) VALUES ($1, $2);',
+    //   [course_id, req.session.user.student_id]
+    // );
     // TODO(corypaik): Update with query from /courses.
-    return t.any(all_courses, [req.session.user.student_id]);
+    //return t.any(all_courses, [req.session.user.student_id]);
   })
     .then(courses => {
       //console.info(courses);

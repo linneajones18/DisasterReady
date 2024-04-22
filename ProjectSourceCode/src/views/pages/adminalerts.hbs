@@ -4,12 +4,13 @@
     <div id="incident_reports">
         <table>
             <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
+                <th>Location</th>
+                <th>Incident Type</th>
+                <th>Details</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Time of Report</th>
+                <th>Approve Report</th>
             </tr>
             {{!-- using "this" and loop to gather all reports and add post/deny button to each--}}
             {{#each incident_reports}}
@@ -23,12 +24,12 @@
                 <td>
                     {{#if resolved}}
                     <form method="post" action="/adminalerts/approve">
-                        <input type="hidden" name="report" value={{course_id}}>
+                        <input type="hidden" name="report" value={{id}}>
                         <button type="button" value="disabled" disabled>Approve</button>
                     </form>
                     {{else}}
                     <form method="post" action="/adminalerts/approve">
-                        <input type="hidden" name="report" value={{course_id}}>
+                        <input type="hidden" name="report" value={{id}}>
                         <button type="submit" >Approve</button>
                     </form>
                     {{/if}}
