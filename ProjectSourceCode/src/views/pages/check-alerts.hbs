@@ -1,0 +1,92 @@
+<!-- views/pages/check-alerts.hbs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Alerts in Your Area</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuAu9ExnoZHAZVIXDyCZcvhx8L95KH3Cs"></script>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="locationInput" placeholder="Enter location here...">
+    <button onclick="zoomToLocation()">Check Alerts</button>
+
+    <div id="map"></div>
+
+    <script>
+        let map;
+        let service;
+        let infowindow;
+
+        function initMap() {
+            const boulder = new google.maps.LatLng(40.014984, -105.270546);
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: boulder,
+                zoom: 15
+            });
+            infowindow = new google.maps.InfoWindow();
+
+            fetch('/api/incidents')
+      .then(response => response.json())
+      .then(data => {
+        data.forEach(incident => {
+          const incidentLoc = new google.maps.LatLng(incident.latitude, incident.longitude);
+          const marker = new google.maps.Marker({
+            position: incidentLoc,
+            map: map,
+            title: incident.location 
+          });
+
+          const infowindow = new google.maps.InfoWindow({
+            content: `
+              <div><strong>Location:</strong> ${incident.location}</div>
+              <div><strong>Type:</strong> ${incident.incident_type}</div>
+              <div><strong>Details:</strong> ${incident.details}</div>
+              <div><strong>Reported At:</strong> ${incident.reported_at}</div>
+            `
+          });
+
+          marker.addListener('click', () => {
+            infowindow.open(map, marker);
+          });
+        });
+      })
+      .catch(error => console.error('Error fetching incident data:', error));
+        }
+
+        function zoomToLocation() {
+            const geocoder = new google.maps.Geocoder();
+            const address = document.getElementById('locationInput').value;
+
+            geocoder.geocode({ 'address': address }, function(results, status) {
+                if (status === 'OK') {
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(17); // Zoom to approximately 50 feet radius
+
+                    // Assume you have a function to fetch and display alerts within 50 feet
+                    displayAlertsNearby(results[0].geometry.location);
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+
+        function displayAlertsNearby(location) {
+            // Logic to display alerts around the given location
+            // This could involve API calls or local calculations
+        }
+
+        window.onload = initMap;
+
+        
+
+
+    </script>
+</body>
+</html>

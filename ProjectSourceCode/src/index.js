@@ -13,6 +13,7 @@ const session = require('express-session'); // To set the session object. To sto
 const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part C.
 
+
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
 // *****************************************************
@@ -32,6 +33,7 @@ const dbConfig = {
   user: process.env.POSTGRES_USER, // the user account to connect with
   password: process.env.POSTGRES_PASSWORD, // the password of the user account
 };
+
 
 const db = pgp(dbConfig);
 
@@ -80,81 +82,67 @@ app.get('/welcome', (req, res) => {
 
 app.get('/', (req, res) => 
 {
-    res.redirect('/login');
-});
-
-app.get('/register', (req, res) =>
-{
-    res.render('pages/register');
-});
-
-//may not be completely functional - copied from last lab where i gave up on writing register so it crashes when you try to register an already existing user
-app.post('/register', async (req, res) =>
-{
-    const hash = await bcrypt.hash(req.body.password, 10);
-    let response = await db.any('INSERT INTO users VALUES ($1, $2);', [req.body.username, hash]);
-    if(response.err){
-        res.redirect('/register', {message: `Username or password already taken.`});
-    }
-    else {
-        res.redirect('/login');
-    }
-});
-
-app.get('/login', (req, res) => 
-{
-  res.render('pages/login');
-});
-
-app.post('/login', async (req, res) =>
-{
-  //WORKING!
-  let user = await db.oneOrNone('SELECT * FROM users WHERE username = $1 LIMIT 1;', [req.body.username]);
-  if(user != undefined){
-    //check if password matches
-    const match = await bcrypt.compare(req.body.password, user.password);
-    if(match) {
-      req.session.user = user;
-      req.session.save();
-      res.redirect('/discover');
-    }
-    else {
-      res.render('pages/login', {message: `Incorrect username or password.`});
-    }
-  }
-  //the user doesn't exist
-  else {
-    res.redirect('/register');
-  }
-});
-
-// Authentication Middleware.
-const auth = (req, res, next) => {
-  if (!req.session.user) {
-    // Default to login page.
-    return res.redirect('/login');
-  }
-  next();
-};
-
-// Authentication Required
-app.use(auth);
-
-app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.render('pages/logout');
+    res.redirect('/maps');
 });
 
 app.get('/Maps', (req, res) => 
 {
-  
+  res.render('pages/maps')
 });
 
+app.get('/report', (req, res) => {
+  res.render('pages/report'); // Render the report form page
+});
+
+app.get('/check-alerts', (req, res) => {
+  res.render('pages/check-alerts'); // Render the report form page
+});
+
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+app.post('/submit-report', async (req, res) => {
+  console.log("HERE@!" + req.body);  // Log the request body to see what data is being received
+  const { location, latitude, longitude, incidentType, details } = req.body;
+  try {
+      const insertQuery = `
+          INSERT INTO incident_reports (location, latitude, longitude, incident_type, details)
+          VALUES ($1, $2, $3, $4, $5)
+          RETURNING *;
+      `;
+      const result = await db.one(insertQuery, [location, latitude, longitude, incidentType, details]);
+      res.redirect('/thank-you');
+  } catch (error) {
+      console.error('Error inserting incident report:', error);
+      res.status(500).send('Error submitting report');
+  }
+});
+
+app.get('/api/incidents', async (req, res) => {
+  try {
+    const incidents = await db.any('SELECT * FROM incident_reports');
+    res.json(incidents);
+  } catch (error) {
+    console.error('Failed to retrieve incidents:', error);
+    res.status(500).json({error: 'Failed to retrieve incidents'});
+  }
+});
+
+
+app.get('/thank-you', (req, res) => {
+  res.render('pages/thank-you'); // Render the report form page
+});
+
+app.get('/resources', (req, res) => {
+  res.render('pages/resources'); // Render the report form page
+});
 
 // *****************************************************
 // <!-- Section 5 : Start Server-->
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
 // app.listen(3000);
+
 module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');

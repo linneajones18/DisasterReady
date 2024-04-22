@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            padding: 20px;
+        }
+        .resource-box {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            width: 45%;
+            background-color: #f0f0f0;
+        }
+        h2 {
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="resource-box">
+            <h2>Education</h2>
+            <p>{{educationalContent}}</p>
+        </div>
+        <div class="resource-box">
+            <h2>Local Resources</h2>
+            <ul>
+                <li><strong>Fire-Station:</strong> {{fireStationAddress}}</li>
+                <li><strong>Hospital:</strong> {{hospitalAddress}}</li>
+                <li><strong>Police Station:</strong> {{policeStationAddress}}</li>
+                <li><strong>Shelters:</strong> {{sheltersLocations}}</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
