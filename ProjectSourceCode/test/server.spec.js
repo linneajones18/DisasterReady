@@ -111,3 +111,42 @@ describe('Testing Login API', () => {
       });
   });
 });
+
+// /editProfile API tests
+describe('Testing Login API', () => {
+  // Positive Testcase :
+  // API: /login
+  // Input: {name: 'John Doe', location: 'Seattle', bio: 'I am so cool'}
+  // Expect: res.status == 200 and res.body.message == 'Success'
+  // Result: This test case should pass and return a status 200 along with a "Success" message.
+  // Explanation: The testcase will call the /editProfile API and return a success because the input is valid
+  it('positive : /editProfile', done => {
+    chai
+    .request(server)
+    .post('/editProfile')
+    .send({name: 'John Doe', location: 'Seattle', bio: 'I am so cool'})
+    .end((err, res) => {
+      expect(res).to.have.status(200);
+      expect(res.body.message).to.equals('Success');
+      done();
+    });
+  });
+
+  // Negative Testcase :
+  // API: /editProfile
+  // Input: {name: 'mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm', location: '', bio: ''}
+  // Expect: res.status == 400 and res.body.message == 'Invalid input'
+  // Result: This test case should pass and return a status 400 along with a "Invalid input" message.
+  // Explanation: The testcase will call the /editProfile and get an invalid input message because the name is too long
+  it('Negative : /login. Checking invalid name', done => {
+    chai
+      .request(server)
+      .post('/editProfile')
+      .send({name: 'mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm', location: '', bio: ''})
+      .end((err, res) => {
+        expect(res).to.have.status(400);
+        expect(res.body.message).to.equals('Invalid input');
+        done();
+      });
+  });
+});
