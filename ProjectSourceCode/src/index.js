@@ -11,7 +11,8 @@ const pgp = require('pg-promise')(); // To connect to the Postgres DB from the n
 const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 const bcrypt = require('bcrypt'); //  To hash passwords
-const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part C.
+const axios = require('axios'); // To make HTTP requests from our server.
+app.use(express.static(__dirname + '/'));
 
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
@@ -74,6 +75,7 @@ app.use(
 // <!-- Section 4 : API Routes -->
 // *****************************************************
 
+//used to test that test functions are set up correctly
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
@@ -91,14 +93,19 @@ app.get('/register', (req, res) =>
 //may not be completely functional - copied from last lab where i gave up on writing register so it crashes when you try to register an already existing user
 app.post('/register', async (req, res) =>
 {
+  try {
     const hash = await bcrypt.hash(req.body.password, 10);
-    let response = await db.any('INSERT INTO users VALUES ($1, $2);', [req.body.email, hash]);
-    if(response.err){
-        res.redirect('/register', {message: `Email or password already taken.`});
-    }
-    else {
-        res.redirect('/login');
-    }
+    let query = await db.any(`INSERT INTO users VALUES ($1, $2, $3, $4, $5);`, [req.body.email, hash, "New User", "Earth", " "]);
+    res.render("pages/login", {
+      message: `Successfully Registered!`
+    });
+  } catch (err) {
+    console.log('Oops! An error occurred!');
+    console.log(err);
+    res.render('pages/register', {
+      message: `An error occurred!`
+    });
+  }
 });
 
 app.get('/login', (req, res) => 
@@ -106,9 +113,15 @@ app.get('/login', (req, res) =>
   res.render('pages/login');
 });
 
+//only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
+app.get('/home', (req, res) => 
+{
+  res.render('pages/home');
+});
+
+
 app.post('/login', async (req, res) =>
 {
-  //WORKING!
   let user = await db.oneOrNone('SELECT * FROM users WHERE email = $1 LIMIT 1;', [req.body.email]);
   if(user != undefined){
     //check if password matches
@@ -128,6 +141,7 @@ app.post('/login', async (req, res) =>
   }
 });
 
+
 // Authentication Middleware.
 const auth = (req, res, next) => {
   if (!req.session.user) {
@@ -140,9 +154,83 @@ const auth = (req, res, next) => {
 // Authentication Required
 app.use(auth);
 
+app.get('/profile', (req, res) => 
+{
+  res.render('pages/profile', {
+    name: req.session.user.name,
+    location: req.session.user.location,
+    bio: req.session.user.bio
+  });
+});
+
+app.get('/editProfile', async (req, res) =>
+{
+  res.render('pages/editProfile');
+});
+
+app.post('/editProfile', async (req, res) =>
+{ 
+  //these variables catch errors in SQL updates
+  var first_response;
+  var second_response;
+  var third_response;
+
+  // individual cases so that if user leaves a box blank, it will keep the previous data
+  if(req.body.name != "")
+  {
+    if(req.body.name.length <= 40) {
+      first_response = await db.any(`UPDATE users SET name = $1 WHERE email = $2;`, [req.body.name, req.session.user.email]);
+      req.session.user.name = req.body.name;
+    }
+    else
+    {
+      res.redirect('/profile', {message: 'Invalid input. Name must be 40 characters or less', error: true});
+    }
+  }
+
+  if(req.body.location != "")
+  {
+    if(req.body.location.length <= 50) 
+    {
+      second_response = await db.any(`UPDATE users SET location = $1 WHERE email = $2;`, [req.body.location, req.session.user.email]);
+      req.session.user.location = req.body.location;
+    }
+    else 
+    {
+      res.redirect('/profile', {message: 'Invalid input. Location must be 50 characters or less', error: true});
+    }
+  }
+
+  if(req.body.bio != "")
+  {
+    if(req.body.bio.length <= 200) 
+    {
+      third_response = await db.any(`UPDATE users SET bio = $1 WHERE email = $2`, [req.body.bio, req.session.user.email]);
+      req.session.user.bio = req.body.bio;
+    }
+    else 
+    {
+      res.redirect('/profile', {message: 'Invalid input. Bio must be 200 characters or less', error: true});
+    }
+  }
+
+  // if any of the updates error this will catch it
+  if((req.body.name && first_response.err) || (req.body.location && second_response.err) || (req.body.bio && third_response.err))
+  {
+    res.redirect('/profile', {message: 'An error occurred when trying to update your profile. Please try again later.', error: true});
+  }
+
+  //if no errors, redirect to profile with updated data
+  else
+  {
+    res.redirect('/profile');
+  }
+});
+
 app.get('/logout', (req, res) => {
   req.session.destroy();
-  res.render('pages/logout');
+  res.render('pages/login');
+  //we should add a message here that says logged out successfully
 });
 
 // *****************************************************
