@@ -135,8 +135,7 @@ app.post('/login', async (req, res) =>
   }
 });
 
-//Admin alerts approval Page
-
+//Admin alerts approval page displaying all unresolved reports and allows action for approval
 app.get('/adminalerts', (req, res) => {
   const all_reports = `
   SELECT
@@ -148,29 +147,48 @@ app.get('/adminalerts', (req, res) => {
     incident_reports.reported_at,
     incident_reports.approval,
   FROM
-    incident_reports;
+    incident_reports
+  WHERE
+    incident_reports.approval = 0;
   `;
-  // Query to list all the unapproved reports on the admin reports approval page
 
-  // db.any(!approval ? all_reports : none)
-  //   .then(incident_reports => {
-  //     console.log(incident_reports)
-  //     res.render('pages/adminalerts', {
-  //       //email: user.email,
-  //       incident_reports,
-  //       action: req.query.approval ? 'Deny' : 'Approve',
-  //     });
-  //   })
-  //   .catch(err => {
-  //     res.render('pages/adminalerts', {
-  //       incident_reports: [],
-  //       //email: user.email,
-  //       error: true,
-  //       //message: err.message,
-  //     });
-  //   });
-
+  //Querying database for all reports awaiting approval
   db.any(all_reports)
+  .then(incident_reports => {
+    console.log(incident_reports)
+    res.render('pages/adminalerts', {
+      //email: user.email,
+      incident_reports,
+      action: req.query.approval ? 'Deny' : 'Approve',  //need deny or not?
+    });
+  })
+  .catch(err => {
+    res.render('pages/adminalerts', {
+      incident_reports: [],
+      //email: user.email,
+      error: true,
+      //message: err.message,
+    });
+  });
+});
+
+//Post which provides approval action from webpage; sets resolved to true in database and reloads page
+app.post('/adminalerts/approve', (req, res) => {
+  const report_id = parseInt(req.body.id);
+  
+  //updating approval for report, setting "resolved" to true so it may be posted on the reports page
+  db.tx(async t => {
+    const {approved} = await t.one(
+      `UPDATE 
+        incident_reports
+       SET 
+        resolved = 1
+       WHERE 
+        id = $1;
+        `,
+      [report_id]
+    );
+  })
   .then(incident_reports => {
     console.log(incident_reports)
     res.render('pages/adminalerts', {
@@ -189,61 +207,41 @@ app.get('/adminalerts', (req, res) => {
   });
 });
 
-app.post('/adminalerts/approve', (req, res) => {
-  const report_id = parseInt(req.body.id);
-  
-  //updating approval for report, setting "resolved" to true so it may be posted on the reports page
-  db.tx(async t => {
-    const {num_prerequisites} = await t.one(
-      `UPDATE incident_reports
-       SET resolved = 1
-       WHERE id = $1`,
-      [report_id]
-    );
+//Renders reports page which displays all reports verified by admin
+app.get('/reports', (req, res) => {
+  const all_verified_reports = `
+  SELECT
+    incident_reports.location,
+    incident_reports.incident_type,
+    incident_reports.details,
+    incident_reports.latitude,
+    incident_reports.longitude,
+    incident_reports.reported_at,
+    incident_reports.approval,
+  FROM
+    incident_reports
+  WHERE
+    incident_reports.approval = 1;
+  `;
 
-    // if (num_prerequisites > 0) {
-    //   // This returns [] if the student has not taken any prerequisites for
-    //   // the course.
-    //   const [row] = await t.any(
-    //     `SELECT
-    //           num_prerequisites_satisfied
-    //         FROM
-    //           student_prerequisite_count
-    //         WHERE
-    //           course_id = $1
-    //           AND student_id = $2`,
-    //     [course_id, req.session.user.student_id]
-    //   );
-
-    //   if (!row || row.num_prerequisites_satisfied < num_prerequisites) {
-    //     throw new Error(`Prerequisites not satisfied for course ${course_id}`);
-    //   }
-    // }
-
-    // There are either no prerequisites, or all have been taken.
-    // await t.none(
-    //   'INSERT INTO student_courses(course_id, student_id) VALUES ($1, $2);',
-    //   [course_id, req.session.user.student_id]
-    // );
-    // TODO(corypaik): Update with query from /courses.
-    //return t.any(all_courses, [req.session.user.student_id]);
-  })
-    .then(courses => {
-      //console.info(courses);
-      res.render('pages/courses', {
-        email: user.email,
-        courses,
-        message: `Successfully added course ${req.body.course_id}`,
-      });
-    })
-    .catch(err => {
-      res.render('pages/courses', {
-        email: user.email,
-        courses: [],
-        error: true,
-        message: err.message,
-      });
+  //Querying database for all verified reports
+  db.any(all_verified_reports)
+  .then(incident_reports => {
+    console.log(incident_reports)
+    res.render('pages/reports', {
+      //email: user.email,
+      incident_reports,
+      //action: req.query.approval ? 'Deny' : 'Approve',
     });
+  })
+  .catch(err => {
+    res.render('pages/reports', {
+      incident_reports: [],
+      //email: user.email,
+      error: true,
+      //message: err.message,
+    });
+  });
 });
 
 // Authentication Middleware.

@@ -22,7 +22,7 @@
                 <td>{{longitude}}</td>
                 <td>{{reported_at}}</td>
                 <td>
-                    {{#if resolved}}
+                    {{#if resolved == 1}}
                     <form method="post" action="/adminalerts/approve">
                         <input type="hidden" name="report" value={{id}}>
                         <button type="button" value="disabled" disabled>Approve</button>
