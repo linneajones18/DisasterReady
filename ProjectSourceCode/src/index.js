@@ -93,14 +93,19 @@ app.get('/register', (req, res) =>
 //may not be completely functional - copied from last lab where i gave up on writing register so it crashes when you try to register an already existing user
 app.post('/register', async (req, res) =>
 {
+  try {
     const hash = await bcrypt.hash(req.body.password, 10);
-    let response = await db.any('INSERT INTO users VALUES ($1, $2, $3, $4, $5);', [req.body.email, hash, "New User", "Earth", " "]);
-    if(response.err){
-        res.redirect('/register', {message: `Email or password already taken.`});
-    }
-    else {
-        res.redirect('/login');
-    }
+    let query = await db.any(`INSERT INTO users VALUES ($1, $2, $3, $4, $5);`, [req.body.email, hash, "New User", "Earth", " "]);
+    res.render("pages/login", {
+      message: `Successfully Registered!`
+    });
+  } catch (err) {
+    console.log('Oops! An error occurred!');
+    console.log(err);
+    res.render('pages/register', {
+      message: `An error occurred!`
+    });
+  }
 });
 
 app.get('/login', (req, res) => 
