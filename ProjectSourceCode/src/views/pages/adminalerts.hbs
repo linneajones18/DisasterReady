@@ -1,30 +1,35 @@
 <!DOCTYPE html>
 <html>
 <h1> Current Reports For Review:</h1>
-    <div id="Report">
+    <div id="incident_reports">
         <table>
             <tr>
-                <th>Course ID</th>
-                <th>Course Name</th>
-                <th>Credit Hours</th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
                 <th></th>
             </tr>
             {{!-- using "this" and loop to gather all reports and add post/deny button to each--}}
-            {{#each report}}
+            {{#each incident_reports}}
             <tr>
-                <td>{{course_id}}</td>    
-                <td>{{course_name}}</td>
-                <td>{{credit_hours}}</td>
+                <td>{{location}}</td>    
+                <td>{{incident_type}}</td>
+                <td>{{details}}</td>
+                <td>{{latitude}}</td>
+                <td>{{longitude}}</td>
+                <td>{{reported_at}}</td>
                 <td>
                     {{#if resolved}}
-                    <form method="post" action="/courses/add">
-                        <input type="hidden" name="course_id" value={{course_id}}>
-                        <button type="button" value="disabled" disabled>Add</button>
+                    <form method="post" action="/adminalerts/approve">
+                        <input type="hidden" name="report" value={{course_id}}>
+                        <button type="button" value="disabled" disabled>Approve</button>
                     </form>
                     {{else}}
-                    <form method="post" action="/courses/add">
-                        <input type="hidden" name="course_id" value={{course_id}}>
-                        <button type="submit" >Add</button>
+                    <form method="post" action="/adminalerts/approve">
+                        <input type="hidden" name="report" value={{course_id}}>
+                        <button type="submit" >Approve</button>
                     </form>
                     {{/if}}
                 </td>
