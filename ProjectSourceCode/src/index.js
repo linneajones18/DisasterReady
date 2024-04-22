@@ -11,7 +11,8 @@ const pgp = require('pg-promise')(); // To connect to the Postgres DB from the n
 const bodyParser = require('body-parser');
 const session = require('express-session'); // To set the session object. To store or access session data, use the `req.session`, which is (generally) serialized as JSON by the store.
 const bcrypt = require('bcrypt'); //  To hash passwords
-const axios = require('axios'); // To make HTTP requests from our server. We'll learn more about it in Part C.
+const axios = require('axios'); // To make HTTP requests from our server.
+app.use(express.static(__dirname + '/'));
 
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
@@ -89,17 +90,21 @@ app.get('/register', (req, res) =>
     res.render('pages/register');
 });
 
-//may not be completely functional - copied from last lab where i gave up on writing register so it crashes when you try to register an already existing user
 app.post('/register', async (req, res) =>
 {
-    const hash = await bcrypt.hash(req.body.password, 10);
-    let response = await db.any('INSERT INTO users VALUES ($1, $2, $3, $4, $5);', [req.body.email, hash, "New User", "Earth", " "]);
-    if(response.err){
-        res.redirect('/register', {message: `Email or password already taken.`});
-    }
-    else {
-        res.redirect('/login');
-    }
+  if(!isNaN(req.body.email))
+  {
+    res.redirect('/register', {message: `Invalid Input`, status:400});
+  }
+
+  const hash = await bcrypt.hash(req.body.password, 10);
+  let response = await db.any('INSERT INTO users VALUES ($1, $2, $3, $4, $5);', [req.body.email, hash, "New User", "Earth", " "]);
+  if(response.err){
+      res.redirect('/register', {message: `Email or password already taken.`, status:400});
+  }
+  else {
+      res.redirect('/login', {status:200});
+  }
 });
 
 app.get('/login', (req, res) => 
@@ -123,7 +128,7 @@ app.post('/login', async (req, res) =>
     if(match) {
       req.session.user = user;
       req.session.save();
-      res.redirect('/home');
+      res.redirect('/home', {status:200});
     }
     else {
       res.render('pages/login', {message: `Incorrect email or password.`});
@@ -131,7 +136,7 @@ app.post('/login', async (req, res) =>
   }
   //the user doesn't exist
   else {
-    res.redirect('/register');
+    res.redirect('/register', {message:'Email not found', status:400});
   }
 });
 
@@ -172,13 +177,14 @@ app.post('/editProfile', async (req, res) =>
   // individual cases so that if user leaves a box blank, it will keep the previous data
   if(req.body.name != "")
   {
+    console.log(req.body.length);
     if(req.body.name.length <= 40) {
       first_response = await db.any(`UPDATE users SET name = $1 WHERE email = $2;`, [req.body.name, req.session.user.email]);
       req.session.user.name = req.body.name;
     }
     else
     {
-      res.redirect('/profile', {message: 'Invalid input. Name must be 40 characters or less', error: true});
+      res.redirect('/profile', {message: 'Invalid input. Name must be 40 characters or less', status:400});
     }
   }
 
@@ -191,7 +197,7 @@ app.post('/editProfile', async (req, res) =>
     }
     else 
     {
-      res.redirect('/profile', {message: 'Invalid input. Location must be 50 characters or less', error: true});
+      res.redirect('/profile', {message: 'Invalid input. Location must be 50 characters or less', status:400});
     }
   }
 
@@ -204,20 +210,20 @@ app.post('/editProfile', async (req, res) =>
     }
     else 
     {
-      res.redirect('/profile', {message: 'Invalid input. Bio must be 200 characters or less', error: true});
+      res.redirect('/profile', {message: 'Invalid input. Bio must be 200 characters or less', error: true, status:400});
     }
   }
 
   // if any of the updates error this will catch it
   if((req.body.name && first_response.err) || (req.body.location && second_response.err) || (req.body.bio && third_response.err))
   {
-    res.redirect('/profile', {message: 'An error occurred when trying to update your profile. Please try again later.', error: true});
+    res.redirect('/profile', {message: 'An error occurred when trying to update your profile. Please try again later.', error: true, status: 400});
   }
 
   //if no errors, redirect to profile with updated data
   else
   {
-    res.redirect('/profile');
+    res.redirect('/profile', {status: 200});
   }
 });
 
