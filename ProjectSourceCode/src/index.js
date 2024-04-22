@@ -128,7 +128,7 @@ app.post('/login', async (req, res) =>
     if(match) {
       req.session.user = user;
       req.session.save();
-      res.redirect('/home', {status:200});
+      res.redirect('/home');
     }
     else {
       res.render('pages/login', {message: `Incorrect email or password.`});
@@ -136,7 +136,7 @@ app.post('/login', async (req, res) =>
   }
   //the user doesn't exist
   else {
-    res.redirect('/register', {message:'Email not found', status:400});
+    res.redirect('/register');
   }
 });
 
@@ -177,16 +177,13 @@ app.post('/editProfile', async (req, res) =>
   // individual cases so that if user leaves a box blank, it will keep the previous data
   if(req.body.name != "")
   {
-    console.log(req.body.name.length);
     if(req.body.name.length <= 40) {
-      console.log("you should not be here");
       first_response = await db.any(`UPDATE users SET name = $1 WHERE email = $2;`, [req.body.name, req.session.user.email]);
       req.session.user.name = req.body.name;
     }
     else
     {
-      console.log("you should be here");
-      res.redirect('/profile', {message: 'Invalid input. Name must be 40 characters or less', status:400});
+      res.redirect('/profile', {message: 'Invalid input. Name must be 40 characters or less', error: true});
     }
   }
 
@@ -199,7 +196,7 @@ app.post('/editProfile', async (req, res) =>
     }
     else 
     {
-      res.redirect('/profile', {message: 'Invalid input. Location must be 50 characters or less', status:400});
+      res.redirect('/profile', {message: 'Invalid input. Location must be 50 characters or less', error: true});
     }
   }
 
@@ -212,20 +209,20 @@ app.post('/editProfile', async (req, res) =>
     }
     else 
     {
-      res.redirect('/profile', {message: 'Invalid input. Bio must be 200 characters or less', error: true, status:400});
+      res.redirect('/profile', {message: 'Invalid input. Bio must be 200 characters or less', error: true});
     }
   }
 
   // if any of the updates error this will catch it
   if((req.body.name && first_response.err) || (req.body.location && second_response.err) || (req.body.bio && third_response.err))
   {
-    res.redirect('/profile', {message: 'An error occurred when trying to update your profile. Please try again later.', error: true, status: 400});
+    res.redirect('/profile', {message: 'An error occurred when trying to update your profile. Please try again later.', error: true});
   }
 
   //if no errors, redirect to profile with updated data
   else
   {
-    res.redirect('/profile', {status: 200});
+    res.redirect('/profile');
   }
 });
 
