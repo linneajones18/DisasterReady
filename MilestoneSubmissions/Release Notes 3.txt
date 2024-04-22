@@ -1,0 +1,5 @@
+*Completed Profile page
+*Patched register page error when trying to register with an already registered email
+*Continued finishing up test functions
+*Completed home page - ready to be merged to main branch now
+*Completed map page - waiting to be prepared to merge to main branch
