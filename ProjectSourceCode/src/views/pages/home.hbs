@@ -1,6 +1,13 @@
+<!-- Include Google Maps API script with your API key -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=APIKEY&callback=initMap"></script>
 
-{{!-- maybe add this to the CSS file? idk man i am not sure what i am doing heheheh --}}
 <style> 
+    body, html {
+        height: 99%;
+        margin: 0;
+        padding: 0;
+    }
+
     .uniform-btn {
         --bs-btn-padding-y: 2.7rem;
         --bs-btn-padding-x: 5rem;
@@ -21,16 +28,67 @@
     }
 
     #nav_buttons_container {
-        text-align: right; 
-        margin-right: 20px; 
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        margin-left: 20px; 
+        margin-right: 20px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    #map_container {
+        flex: 1;
+        margin-right: 20px;
+        margin-top: 20px;
+        height: 90%; /* Adjust the height as needed */
+    }
+
+    #map {
+        height: calc(100% - 20px); /* Adjust the height as needed */
+        margin-bottom: 20px; /* Adjust the margin as needed */
+    }
+    .button-container {
+        display: flex;
+        flex-direction: row;
+        height: 100%;
     }
 </style>
 
-{{!-- This is broken!!!!!!!!!!!!!!!! --}}
-<div id = "Map projection"> 
-    <script async defer src="API_KEY"></script>
-    <script>
-    function initMap() {
+<div class="button-container">
+    <div id="nav_buttons_container">
+        <div id="report_button">
+            <a href="/report" class="btn btn-primary uniform-btn hover-color">
+                Make a Report
+            </a>
+        </div>
+        <br>
+        <div id="alert_button">
+            <a href="/alerts" class="btn btn-primary uniform-btn hover-color">
+                Check Alerts
+            </a>
+        </div>
+        <br>
+        <div id="resource_button">
+            <a href="/resources" class="btn btn-primary uniform-btn hover-color">
+                View Resources
+            </a>
+        </div>
+        <br>
+        <div id="map_button">
+            <a href="/map" class="btn btn-primary uniform-btn hover-color">
+                Look at the map
+            </a>
+        </div>
+    </div>
+
+    <div id="map_container">
+        <div id="map"></div> <!-- Container for the map -->
+    </div>
+</div>
+
+<script>
+function initMap() {
     var mapOptions = {
         center: new google.maps.LatLng(40.014984, -105.270546),
         zoom: 13,
@@ -44,33 +102,5 @@
         map: map,
         title: 'Location'
     });
-    }
-    </script>
-</div>
-
-<div id="nav_buttons_container">
-<br>
-    <div id="report_button">
-        <a href="/report" class="btn btn-primary uniform-btn hover-color">
-            Make a Report
-        </a>
-    </div>
-    <br>
-    <div id="alert_button">
-        <a href="/alerts" class="btn btn-primary uniform-btn hover-color">
-            Check Alerts
-        </a>
-    </div>
-    <br>
-    <div id="resource_button">
-        <a href="/resources" class="btn btn-primary uniform-btn hover-color">
-            View Resources
-        </a>
-    </div>
-    <br>
-    <div id="map_button">
-        <a href="/map" class="btn btn-primary uniform-btn hover-color">
-            Look at the map
-        </a>
-    </div>
-</div>
+}
+</script>
