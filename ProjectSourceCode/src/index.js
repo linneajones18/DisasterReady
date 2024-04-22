@@ -135,6 +135,121 @@ app.post('/login', async (req, res) =>
   }
 });
 
+//Admin alerts approval Page
+
+app.get('/adminalerts', (req, res) => {
+  const all_reports = `
+  SELECT
+    incident_reports.location,
+    incident_reports.incident_type,
+    incident_reports.details,
+    incident_reports.latitude,
+    incident_reports.longitude,
+    incident_reports.reported_at,
+    incident_reports.approval,
+  FROM
+    incident_reports;
+  `;
+  // Query to list all the unapproved reports on the admin reports approval page
+
+  // db.any(!approval ? all_reports : none)
+  //   .then(incident_reports => {
+  //     console.log(incident_reports)
+  //     res.render('pages/adminalerts', {
+  //       //email: user.email,
+  //       incident_reports,
+  //       action: req.query.approval ? 'Deny' : 'Approve',
+  //     });
+  //   })
+  //   .catch(err => {
+  //     res.render('pages/adminalerts', {
+  //       incident_reports: [],
+  //       //email: user.email,
+  //       error: true,
+  //       //message: err.message,
+  //     });
+  //   });
+
+  db.any(all_reports)
+  .then(incident_reports => {
+    console.log(incident_reports)
+    res.render('pages/adminalerts', {
+      //email: user.email,
+      incident_reports,
+      action: req.query.approval ? 'Deny' : 'Approve',
+    });
+  })
+  .catch(err => {
+    res.render('pages/adminalerts', {
+      incident_reports: [],
+      //email: user.email,
+      error: true,
+      //message: err.message,
+    });
+  });
+});
+
+app.post('/adminalerts/approve', (req, res) => {
+  //const course_id = parseInt(req.body.course_id);
+  
+  db.tx(async t => {
+    // This transaction will continue iff the student has satisfied all the
+    // required prerequisites.
+    const {num_prerequisites} = await t.one(
+      `SELECT
+        num_prerequisites
+       FROM
+        course_prerequisite_count
+       WHERE
+        course_id = $1`,
+      [course_id]
+    );
+
+    if (num_prerequisites > 0) {
+      // This returns [] if the student has not taken any prerequisites for
+      // the course.
+      const [row] = await t.any(
+        `SELECT
+              num_prerequisites_satisfied
+            FROM
+              student_prerequisite_count
+            WHERE
+              course_id = $1
+              AND student_id = $2`,
+        [course_id, req.session.user.student_id]
+      );
+
+      if (!row || row.num_prerequisites_satisfied < num_prerequisites) {
+        throw new Error(`Prerequisites not satisfied for course ${course_id}`);
+      }
+    }
+
+    // There are either no prerequisites, or all have been taken.
+    await t.none(
+      'INSERT INTO student_courses(course_id, student_id) VALUES ($1, $2);',
+      [course_id, req.session.user.student_id]
+    );
+    // TODO(corypaik): Update with query from /courses.
+    return t.any(all_courses, [req.session.user.student_id]);
+  })
+    .then(courses => {
+      //console.info(courses);
+      res.render('pages/courses', {
+        email: user.email,
+        courses,
+        message: `Successfully added course ${req.body.course_id}`,
+      });
+    })
+    .catch(err => {
+      res.render('pages/courses', {
+        email: user.email,
+        courses: [],
+        error: true,
+        message: err.message,
+      });
+    });
+});
+
 // Authentication Middleware.
 const auth = (req, res, next) => {
   if (!req.session.user) {
