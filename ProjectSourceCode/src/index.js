@@ -177,13 +177,15 @@ app.post('/editProfile', async (req, res) =>
   // individual cases so that if user leaves a box blank, it will keep the previous data
   if(req.body.name != "")
   {
-    console.log(req.body.length);
+    console.log(req.body.name.length);
     if(req.body.name.length <= 40) {
+      console.log("you should not be here");
       first_response = await db.any(`UPDATE users SET name = $1 WHERE email = $2;`, [req.body.name, req.session.user.email]);
       req.session.user.name = req.body.name;
     }
     else
     {
+      console.log("you should be here");
       res.redirect('/profile', {message: 'Invalid input. Name must be 40 characters or less', status:400});
     }
   }
