@@ -76,6 +76,7 @@ app.use(
 // <!-- Section 4 : API Routes -->
 // *****************************************************
 
+//used to test that test functions are set up correctly
 app.get('/welcome', (req, res) => {
   res.json({status: 'success', message: 'Welcome!'});
 });
@@ -90,8 +91,21 @@ app.get('/Maps', (req, res) =>
   res.render('pages/maps')
 });
 
-app.get('/report', (req, res) => {
+app.get('/report', (req, res) => 
+{
   res.render('pages/report'); // Render the report form page
+});
+//may not be completely functional - copied from last lab where i gave up on writing register so it crashes when you try to register an already existing user
+app.post('/register', async (req, res) =>
+{
+    const hash = await bcrypt.hash(req.body.password, 10);
+    let response = await db.any('INSERT INTO users VALUES ($1, $2);', [req.body.email, hash]);
+    if(response.err){
+        res.redirect('/register', {message: `Email or password already taken.`});
+    }
+    else {
+        res.redirect('/login');
+    }
 });
 
 app.get('/check-alerts', (req, res) => {
@@ -116,6 +130,34 @@ app.post('/submit-report', async (req, res) => {
   } catch (error) {
       console.error('Error inserting incident report:', error);
       res.status(500).send('Error submitting report');
+  }
+});
+
+//only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
+app.get('/home', (req, res) => 
+{
+  res.render('pages/home');
+});
+
+
+app.post('/login', async (req, res) =>
+{
+  let user = await db.oneOrNone('SELECT * FROM users WHERE email = $1 LIMIT 1;', [req.body.email]);
+  if(user != undefined){
+    //check if password matches
+    const match = await bcrypt.compare(req.body.password, user.password);
+    if(match) {
+      req.session.user = user;
+      req.session.save();
+      res.redirect('/home');
+    }
+    else {
+      res.render('pages/login', {message: `Incorrect email or password.`});
+    }
+  }
+  //the user doesn't exist
+  else {
+    res.redirect('/register');
   }
 });
 
