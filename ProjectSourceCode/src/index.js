@@ -14,6 +14,7 @@ const bcrypt = require('bcrypt'); //  To hash passwords
 const axios = require('axios'); // To make HTTP requests from our server.
 app.use(express.static(__dirname + '/'));
 
+
 // *****************************************************
 // <!-- Section 2 : Connect to DB -->
 // *****************************************************
@@ -33,6 +34,7 @@ const dbConfig = {
   user: process.env.POSTGRES_USER, // the user account to connect with
   password: process.env.POSTGRES_PASSWORD, // the password of the user account
 };
+
 
 const db = pgp(dbConfig);
 
@@ -82,13 +84,20 @@ app.get('/welcome', (req, res) => {
 
 app.get('/', (req, res) => 
 {
-    res.redirect('/login');
+    res.redirect('/maps');
 });
 
-app.get('/register', (req, res) =>
+app.get('/Maps', (req, res) => 
 {
-    res.render('pages/register');
+  res.render('pages/maps')
 });
+
+
+app.get('/report', (req, res) => 
+{
+  res.render('pages/report'); // Render the report form page
+});
+//may not be completely functional - copied from last lab where i gave up on writing register so it crashes when you try to register an already existing user
 
 app.post('/register', async (req, res) =>
 {
@@ -107,9 +116,29 @@ app.post('/register', async (req, res) =>
   }
 });
 
-app.get('/login', (req, res) => 
-{
-  res.render('pages/login');
+app.get('/check-alerts', (req, res) => {
+  res.render('pages/check-alerts'); // Render the report form page
+});
+
+// Body parser middleware
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+app.post('/submit-report', async (req, res) => {
+  console.log("HERE@!" + req.body);  // Log the request body to see what data is being received
+  const { location, latitude, longitude, incidentType, details } = req.body;
+  try {
+      const insertQuery = `
+          INSERT INTO incident_reports (location, latitude, longitude, incident_type, details)
+          VALUES ($1, $2, $3, $4, $5)
+          RETURNING *;
+      `;
+      const result = await db.one(insertQuery, [location, latitude, longitude, incidentType, details]);
+      res.redirect('/thank-you');
+  } catch (error) {
+      console.error('Error inserting incident report:', error);
+      res.status(500).send('Error submitting report');
+  }
 });
 
 //only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
@@ -141,6 +170,16 @@ app.post('/login', async (req, res) =>
 });
 
 
+app.get('/api/incidents', async (req, res) => {
+  try {
+    const incidents = await db.any('SELECT * FROM incident_reports');
+    res.json(incidents);
+  } catch (error) {
+    console.error('Failed to retrieve incidents:', error);
+    res.status(500).json({error: 'Failed to retrieve incidents'});
+  }
+});
+
 // Authentication Middleware.
 const auth = (req, res, next) => {
   if (!req.session.user) {
@@ -150,8 +189,16 @@ const auth = (req, res, next) => {
   next();
 };
 
-// Authentication Required
-app.use(auth);
+
+
+
+app.get('/thank-you', (req, res) => {
+  res.render('pages/thank-you'); // Render the report form page
+});
+
+app.get('/resources', (req, res) => {
+  res.render('pages/resources'); // Render the report form page
+});
 
 app.get('/profile', (req, res) => 
 {
@@ -237,5 +284,6 @@ app.get('/logout', (req, res) => {
 // *****************************************************
 // starting the server and keeping the connection open to listen for more requests
 // app.listen(3000);
+
 module.exports = app.listen(3000);
 console.log('Server is listening on port 3000');
