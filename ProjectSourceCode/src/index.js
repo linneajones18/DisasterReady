@@ -99,6 +99,11 @@ app.get('/report', (req, res) =>
 });
 //may not be completely functional - copied from last lab where i gave up on writing register so it crashes when you try to register an already existing user
 
+app.get('/register', (req, res) =>
+{
+    res.render('pages/register');
+});
+
 app.post('/register', async (req, res) =>
 {
   try {
@@ -147,6 +152,16 @@ app.get('/home', (req, res) =>
   res.render('pages/home');
 });
 
+app.get('/login', (req, res) => 
+{
+  res.render('pages/login');
+});
+
+//only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
+app.get('/home', (req, res) => 
+{
+  res.render('pages/home');
+});
 
 app.post('/login', async (req, res) =>
 {
@@ -188,9 +203,6 @@ const auth = (req, res, next) => {
   }
   next();
 };
-
-
-
 
 app.get('/thank-you', (req, res) => {
   res.render('pages/thank-you'); // Render the report form page
