@@ -64,6 +64,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
+    login: false, // to check if the user is logged in
   })
 );
 
@@ -141,12 +142,17 @@ app.post('/submit-report', async (req, res) => {
   }
 });
 
-//only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
+//Added so that it checks if the user is logged in before getting to the home page
 app.get('/home', (req, res) => 
 {
-  res.render('pages/home');
+  if(req.session.login){
+    res.render('pages/home');
+  }
+  else {
+    res.redirect('/login');
+  }
+  
 });
-
 
 app.post('/login', async (req, res) =>
 {
@@ -156,8 +162,9 @@ app.post('/login', async (req, res) =>
     const match = await bcrypt.compare(req.body.password, user.password);
     if(match) {
       req.session.user = user;
+      req.session.login = true;
       req.session.save();
-      res.redirect('/home');
+      res.redirect('/home');// so this works only if you're getting there from logged in
     }
     else {
       res.render('pages/login', {message: `Incorrect email or password.`});
@@ -169,6 +176,27 @@ app.post('/login', async (req, res) =>
   }
 });
 
+
+//This is how you can get to the other pages and whatnot.
+app.get('/alerts', (req, res) => 
+{
+  res.render('pages/alerts');
+});
+
+app.get('/report', (req, res) => 
+{
+  res.render('pages/report');
+});
+
+app.get('/resources', (req, res) => 
+{
+  res.render('pages/resources');
+});
+
+app.get('/map', (req, res) => 
+{
+  res.render('pages/map');
+=======
 
 app.get('/api/incidents', async (req, res) => {
   try {
