@@ -14,7 +14,7 @@
             {{!-- using "this" and loop to gather all reports and add post/deny button to each--}}
             {{#each incident_reports}}
             <tr>
-                {{#if resolved}}
+                {{#if approval == 1}}
                     <td>{{location}}</td>    
                     <td>{{incident_type}}</td>
                     <td>{{details}}</td>

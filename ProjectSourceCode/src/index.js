@@ -182,7 +182,7 @@ app.post('/adminalerts/approve', (req, res) => {
       `UPDATE 
         incident_reports
        SET 
-        resolved = 1
+        approval = 1
        WHERE 
         id = $1;
         `,
