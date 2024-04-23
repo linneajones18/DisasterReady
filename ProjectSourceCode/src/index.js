@@ -61,7 +61,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     saveUninitialized: false,
     resave: false,
-    login: false,
+    login: false, // to check if the user is logged in
   })
 );
 
@@ -108,6 +108,7 @@ app.get('/login', (req, res) =>
   res.render('pages/login');
 });
 
+//Added so that it checks if the user is logged in before getting to the home page
 app.get('/home', (req, res) => 
 {
   if(req.session.login){
