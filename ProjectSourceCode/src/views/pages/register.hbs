@@ -1,20 +1,37 @@
-<html>
-<div class="px-5">
-    <h1>Register</h1>
-</div>
-<form method="post" action="/register">
-    <div class="mb-auto px-5">
-        <label for="email" class="form-label">Email</label>
-        <input type="text" class="form-control" name="email"/>
-        <label for="password" class="form-label">Password</label>
-        <input type="password" class="form-control" name="password"/>
+{{#if message}}
+    {{>message}}
+{{/if}}
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-12 col-md-8 col-lg-6 col-xl-4">
+        <div class="card shadow-2-strong" style="border-radius: 1rem; background-color: lightblue">
+          <div class="card-body p-5 text-center">
+            <form method="post" action="/register">
+            <h3 class="mb-5">Create an Account</h3>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+              <label for="email" class="form-label">Email</label>
+              <input type="text" class="form-control" name="email"/>
+            </div>
+
+            <div data-mdb-input-init class="form-outline mb-4">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" name="password"/>
+            </div>
+
+            <hr class="my-4">
+
+            <button data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-outline-light" style="background-color:#00224D; width:200px" type="submit">Sign up</button>
+
+            <hr class="my-4">
+
+            <div class="mb-3" style="text-align:center">
+            <p>Already have an account?</p>
+            <a class="link-opacity-100" href="/login">Login</a>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="mb-auto px-5">
-        <br>
-        <button id="register_button" type="submit" class="btn btn-primary">Register</button>
-    </div>
-    <div class="mb-auto px-5">
-        <p>Already have an account?</p>
-        <a class="nav-link" href="/login">Login</a>
-    </div>
-</form>
+  </div>
