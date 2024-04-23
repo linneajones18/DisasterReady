@@ -212,7 +212,7 @@ app.get('/resources', (req, res) =>
 app.get('/map', (req, res) => 
 {
   res.render('pages/map');
-=======
+});
 
 app.get('/api/incidents', async (req, res) => {
   try {
