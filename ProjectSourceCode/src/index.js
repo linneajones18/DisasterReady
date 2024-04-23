@@ -85,7 +85,7 @@ app.get('/welcome', (req, res) => {
 
 app.get('/', (req, res) => 
 {
-    res.redirect('/maps');
+    res.redirect('/login');
 });
 
 app.get('/Maps', (req, res) => 
@@ -243,11 +243,18 @@ app.get('/resources', (req, res) => {
 
 app.get('/profile', (req, res) => 
 {
-  res.render('pages/profile', {
-    name: req.session.user.name,
-    location: req.session.user.location,
-    bio: req.session.user.bio
-  });
+  if(req.session.user)
+  {
+    res.render('pages/profile', {
+      name: req.session.user.name,
+      location: req.session.user.location,
+      bio: req.session.user.bio
+    });
+  }
+  else
+  {
+    res.render('pages/login', {message:'You must sign in to view your profile.'});
+  }
 });
 
 app.get('/editProfile', async (req, res) =>
