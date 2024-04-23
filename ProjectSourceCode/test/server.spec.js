@@ -111,3 +111,114 @@ describe('Testing Login API', () => {
       });
   });
 });
+
+// Positive Test Case:
+// API Endpoint: /maps
+// Input: N/A (GET request)
+// Expectation: Expects a successful rendering of the maps page.
+// Result: The test should pass if the response status is 200 and the page is rendered successfully.
+
+it('positive: /maps', done => {
+  chai
+    .request(server)
+    .get('/maps')
+    .end((err, res) => {
+      expect(res).to.have.status(200);
+      done();
+    });
+});
+
+// API Endpoint: /maps (assuming potential error scenarios)
+// Input: N/A (GET request)
+// Expectation: Expects a failure in rendering the maps page due to some error.
+// Result: The test should pass if the response status is not 200 (indicating an error).
+
+it('fails to load markers submitted through submit report', done => {
+  // Simulate a scenario where markers are expected but not loaded
+  // the map endpoint doesn't fetch or display markers correctly
+  
+  chai
+    .request(server)
+    .get('/maps')
+    .end((err, res) => {
+      expect(res).to.have.status(200);
+      expect(res.body.markers).to.be.an('array');
+      // Assert that the markers array is empty or null, indicating that markers are not loaded
+      expect(res.body.markers).to.be.empty; 
+      done();
+    });
+});
+
+// Positive Test Case:
+// API Endpoint: /submit-report
+// Input: JSON object containing location, latitude, longitude, incidentType, and details.
+// Expectation: Expects successful submission of a report.
+// Result: The test should pass if the response status is 200 and the report is successfully submitted to the database.
+
+it('positive: /submit-report', done => {
+  const reportData = {
+    location: "Boulder",
+    latitude: 40.456,
+    longitude: -105.012,
+    incidentType: "Theft",
+    details: "Stole a shopping cart from king soopers"
+  };
+  chai
+    .request(server)
+    .post('/submit-report')
+    .send(reportData)
+    .end((err, res) => {
+      expect(res).to.have.status(200);
+      done();
+    });
+});
+
+// API Endpoint: /submit-report
+// Input: Incomplete or invalid JSON object.
+// Expectation: Expects a failure in submitting the report due to invalid or incomplete data.
+// Result: The test should pass if the response status is not 200 and an error message is returned.
+
+it('negative: /submit-report', done => {
+  const invalidReportData = {
+    // Incomplete or invalid data
+    location: "Boulder, colorado",
+    incidentType: "Monkey stole my banana"
+  };
+  chai
+    .request(server)
+    .post('/submit-report')
+    .send(invalidReportData)
+    .end((err, res) => {
+      expect(res).to.not.have.status(200);
+      done();
+    });
+});
+
+// Edge Case:
+// API Endpoint: /submit-report
+// Input: JSON object with extreme values or unexpected data types.
+// Expectation: Expects proper handling of edge cases without crashing the server or causing unexpected behavior.
+// Result: The test should pass if the server responds appropriately, either by rejecting the request or handling it gracefully.
+
+it('edge case: /submit-report', done => {
+  const extremeReportData = {
+    location: "Sample Location",
+    latitude: 9999, // Extreme latitude value
+    longitude: 9999, // Extreme longitude value
+    incidentType: "Theft",
+    details: "extreme, we out there"
+  };
+  chai
+    .request(server)
+    .post('/submit-report')
+    .send(extremeReportData)
+    .end((err, res) => {
+      // Assert server response handling of extreme cases
+      // Add assertions as appropriate
+      done();
+    });
+});
+
+
+
+

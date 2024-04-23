@@ -3,62 +3,16 @@
 <head>
  <title>DisasterReady Map</title>
  <style>
-   body, html {
-     height: 100%;
-     margin: 0;
-     padding: 0;
-     overflow: hidden; /* Prevents scrollbars */
-   }
-   #container {
-     position: relative; /* Container for positioned elements */
-     height: 100%;
-   }
-   #controlPanel {
-     position: absolute; /* Absolutely position the control panel */
-     left: 0; /* Align to the left */
-     top: 0; /* Align to the top */
-     bottom: 0; /* Stretch to the bottom */
-     width: 25%; /* Adjust the width as needed */
-     overflow-y: auto; /* Allows scrolling if content is too long */
-     padding: 20px;
-     box-sizing: border-box; /* Include padding in the width */
-     background-color: #f7f7f7; /* Background color for visibility */
-   }
-   .button {
-     background-color: #add8e6;
-     padding: 20px;
-     margin-bottom: 25px; /* Space between buttons */
-     text-align: center;
-     font-size: 16px; /* Font size */
-     border: none;
-     cursor: pointer;
-     width: 100%; /* Full width */
-     box-sizing: border-box; /* Include padding and border in the width */
-   }
-   .button:hover {
-     background-color: #87ceeb;
-   }
-   #map {
-     position: absolute; /* Absolutely position the map */
-     right: 0; /* Align to the right */
-     top: 0; /* Align to the top */
-     bottom: 0; /* Stretch to the bottom */
-     left: 25%; /* Start from the end of the control panel */
-   }
+  #map {
+      height: 100%;
+      width: 100%;
+    }
  </style>
 </head>
 <body>
 
-
-<div id="container">
- <div id="controlPanel">
-   <button class="button" onclick="location.href='/report'">Report incident</button>
-   <button class="button" onclick="location.href='/check-alerts'">Check alerts in your area</button>
-   <button class="button" onclick="location.href='/resources'">Resources</button>
-   <button class="button">Map</button>
- </div>
   <div id="map">
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap"></script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuAu9ExnoZHAZVIXDyCZcvhx8L95KH3Cs&callback=initMap"></script>
         <script>
     function initMap() {
         var mapOptions = {
@@ -100,13 +54,5 @@
     </script>
  </div>
 </div>
-
-
-
-
-
-
-
-
 </body>
 </html>
