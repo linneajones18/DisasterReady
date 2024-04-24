@@ -83,24 +83,47 @@
     </div>
 
     <div id="map_container">
-        <div id="map"></div> <!-- Container for the map -->
-    </div>
-</div>
-
-<script>
-function initMap() {
-    var mapOptions = {
+         <div id="map">
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAuAu9ExnoZHAZVIXDyCZcvhx8L95KH3Cs&callback=initMap"></script>
+        <script>
+    function initMap() {
+        var mapOptions = {
         center: new google.maps.LatLng(40.014984, -105.270546),
         zoom: 13,
         mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
+        };
 
-    var map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        var map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-    var marker = new google.maps.Marker({
-        position: mapOptions.center,
-        map: map,
-        title: 'Location'
-    });
-}
-</script>
+        // Fetch incident data from the server
+        fetch('/api/incidents')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(incident => {
+            const incidentLoc = new google.maps.LatLng(incident.latitude, incident.longitude);
+            const marker = new google.maps.Marker({
+                position: incidentLoc,
+                map: map,
+                title: incident.location 
+            });
+
+            const infowindow = new google.maps.InfoWindow({
+                content: `
+                <div><strong>Location:</strong> ${incident.location}</div>
+                <div><strong>Type:</strong> ${incident.incident_type}</div>
+                <div><strong>Details:</strong> ${incident.details}</div>
+                <div><strong>Reported At:</strong> ${incident.reported_at}</div>
+                `
+            });
+
+            marker.addListener('click', () => {
+                infowindow.open(map, marker);
+            });
+            });
+        })
+        .catch(error => console.error('Error fetching incident data:', error));
+        }
+    </script>
+ </div>
+</div>
+</div>

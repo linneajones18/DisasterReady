@@ -1,0 +1,3 @@
+*Finished setting up data base so the application runs on docker on localhost:3000
+*Created functional login/register pages
+*Created navbar
