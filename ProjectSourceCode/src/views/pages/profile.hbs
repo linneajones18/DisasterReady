@@ -9,9 +9,10 @@
 
 <br>
 
-<div class="card" style="width: 25rem; height:36rem; background-color:#87CEEB; margin-left:20px">
+<div class="card" style="width: 25rem; height:36rem; background-color:lightblue; margin-left:20px">
     <br>
-    <img class="card-img-top" src="https://fivepointsdentalnj.com/wp-content/uploads/2015/11/anonymous-user.png" style="height: 300px; width: auto; align-self: center;">
+    {{!-- profile photo --}}
+    <img class="card-img-top" src="../../resources/img/blankProfilePic.jpg" style="height: 300px; width: auto; align-self: center;">
     
     <div class="card-body">
         {{!-- if user has input their name it will show up, otherwise they will appear as "new user" --}}
@@ -20,7 +21,10 @@
         <h6 id="user-location" class="card-text">{{location}}</h6>
         <p id="user-bio" class="card-text">{{bio}}</p>
 
+        {{!-- edit profile button - goes to separate page and returns to this page with new changes when user hits save --}}
         <a href="/editProfile" class="btn btn-block btn-outline-light" style="background-color:#00224D">Edit Profile</a>
+
+        {{!-- logout button --}}
         <a href='/logout' class="btn btn-block btn-outline-light" style="background-color:#00224D">Logout</a>
     </div>
 </div>
