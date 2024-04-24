@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<h1> Current Reports For Review:</h1>
+    <div id="incident_reports">
+        <table>
+            <tr>
+                <th>Location</th>
+                <th>Incident Type</th>
+                <th>Details</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+                <th>Time of Report</th>
+                <th>Approve Report</th>
+            </tr>
+            {{!-- using "this" and loop to gather all reports and add approve button to each--}}
+            {{#each incident_reports}}
+            <tr>
+                <td>{{location}}</td>    
+                <td>{{incident_type}}</td>
+                <td>{{details}}</td>
+                <td>{{latitude}}</td>
+                <td>{{longitude}}</td>
+                <td>{{reported_at}}</td>
+                <td>
+                    {{#if approval == 1}}
+                    <form method="post" action="/adminalerts/approve">
+                        <input type="hidden" name="report" value={{id}}>
+                        <button type="button" value="disabled" disabled>Approve</button>
+                    </form>
+                    {{else}}
+                    <form method="post" action="/adminalerts/approve">
+                        <input type="hidden" name="report" value={{id}}>
+                        <button type="submit" >Approve</button>
+                    </form>
+                    {{/if}}
+                </td>
+            </tr>
+            {{/each}}  
+        </table>
+    </div>
+</html>
+
+{{>footer}}
