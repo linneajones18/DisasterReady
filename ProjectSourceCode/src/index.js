@@ -110,13 +110,13 @@ app.get('/login', (req, res) =>
 
 app.get('/home', (req, res) => 
 {
-  if(req.session.login){
-    res.render('pages/home');
-  }
-  else {
-    res.redirect('/login');
-  }
-  
+  // if(req.session.login){
+  //   res.render('pages/home');
+  // }
+  // else {
+  //   res.redirect('/login');
+  // }
+  res.render('pages/home');
 });
 
 app.post('/login', async (req, res) =>
