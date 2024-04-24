@@ -6,21 +6,21 @@
             <tr>
                 <th>Location</th>
                 <th>Incident Type</th>
-                <th>Details</th>
                 <th>Latitude</th>
                 <th>Longitude</th>
                 <th>Time of Report</th>
+                <th>Details</th>
             </tr>
             {{!-- using "this" and loop to gather all reports and add post/deny button to each--}}
             {{#each incident_reports}}
             <tr>
-                {{#if approval == 1}}
+                {{#if approval}}
                     <td>{{location}}</td>    
                     <td>{{incident_type}}</td>
-                    <td>{{details}}</td>
                     <td>{{latitude}}</td>
                     <td>{{longitude}}</td>
                     <td>{{reported_at}}</td>
+                    <td>{{details}}</td>
                 {{else}}
                     <td>Report Pending Approval...</td>
                 {{/if}}

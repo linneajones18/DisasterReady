@@ -235,37 +235,25 @@ app.get('/resources', (req, res) => {
   res.render('pages/resources'); // Render the report form page
 });
 
+const all_reports = `
+  SELECT *
+  FROM incident_reports`;
+
 //Admin alerts approval page displaying all unresolved reports and allows action for approval
 app.get('/adminalerts', (req, res) => {
-  const all_reports = `
-  SELECT
-    incident_reports.location,
-    incident_reports.incident_type,
-    incident_reports.details,
-    incident_reports.latitude,
-    incident_reports.longitude,
-    incident_reports.reported_at,
-    incident_reports.approval,
-  FROM
-    incident_reports
-  WHERE
-    incident_reports.approval = 0;
-  `;
 
   //Querying database for all reports awaiting approval
   db.any(all_reports)
   .then(incident_reports => {
     console.log(incident_reports)
     res.render('pages/adminalerts', {
-      //email: user.email,
       incident_reports,
-      action: req.query.approval ? 'Deny' : 'Approve',  //need deny or not?
+      //action: req.query.approval ? 'Deny' : 'Approve',  //need deny or not?
     });
   })
   .catch(err => {
     res.render('pages/adminalerts', {
       incident_reports: [],
-      //email: user.email,
       error: true,
       //message: err.message,
     });
@@ -276,70 +264,48 @@ app.get('/adminalerts', (req, res) => {
 app.post('/adminalerts/approve', (req, res) => {
   const report_id = parseInt(req.body.id);
 
-  //updating approval for report, setting "resolved" to true so it may be posted on the reports page
+  //updating approval for report, setting "resolved" to true so it may be posted on the alerts page
   db.tx(async t => {
-    const {approved} = await t.one(
-      `UPDATE 
-        incident_reports
-       SET 
-        approval = 1
-       WHERE 
-        id = $1;
+    await t.none(
+      `UPDATE incident_reports
+       SET approval = 1
+       WHERE id = $1;
         `,
       [report_id]
     );
+    return t.any(all_reports);
   })
   .then(incident_reports => {
     console.log(incident_reports)
     res.render('pages/adminalerts', {
-      //email: user.email,
       incident_reports,
-      action: req.query.approval ? 'Deny' : 'Approve',
-});
+      message: 'Successfully Approved Report',
+    });
   })
   .catch(err => {
     res.render('pages/adminalerts', {
       incident_reports: [],
-      //email: user.email,
       error: true,
-      //message: err.message,
+      message: 'Unable to Approve Report',
     });
   });
 });
 
 //Renders alerts page which displays all alerts verified by admin
 app.get('/alerts', (req, res) => {
-  const all_verified_reports = `
-  SELECT
-    incident_reports.location,
-    incident_reports.incident_type,
-    incident_reports.details,
-    incident_reports.latitude,
-    incident_reports.longitude,
-    incident_reports.reported_at,
-    incident_reports.approval,
-  FROM
-    incident_reports
-  WHERE
-    incident_reports.approval = 1;
-  `;
 
   //Querying database for all verified reports
-  db.any(all_verified_reports)
+  db.any(all_reports)
   .then(incident_reports => {
     console.log(incident_reports)
     res.render('pages/alerts', {
-      //email: user.email,
       incident_reports,
-      //action: req.query.approval ? 'Deny' : 'Approve',
     });
   })
   .catch(err => {
     res.render('pages/alerts', {
       incident_reports: [],
-      //email: user.email,
       error: true,
-      //message: err.message,
     });
   });
 });
