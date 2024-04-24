@@ -122,10 +122,6 @@ app.post('/register', async (req, res) =>
   }
 });
 
-app.get('/check-alerts', (req, res) => {
-  res.render('pages/check-alerts'); // Render the report form page
-});
-
 // Body parser middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -147,29 +143,6 @@ app.post('/submit-report', async (req, res) => {
   }
 });
 
-//Added so that it checks if the user is logged in before getting to the home page
-app.get('/home', (req, res) => 
-{
-  if(req.session.login){
-    res.render('pages/home');
-  }
-  else {
-    res.redirect('/login');
-  }
-  
-});
-
-app.get('/login', (req, res) => 
-{
-  res.render('pages/login');
-});
-
-//only for testing, make sure that This is fixed so that it only opens the home page once the user is logged in
-app.get('/home', (req, res) => 
-{
-  res.render('pages/home');
-});
-
 app.post('/login', async (req, res) =>
 {
   let user = await db.oneOrNone('SELECT * FROM users WHERE email = $1 LIMIT 1;', [req.body.email]);
@@ -180,7 +153,7 @@ app.post('/login', async (req, res) =>
       req.session.user = user;
       req.session.login = true;
       req.session.save();
-      res.redirect('/home');// so this works only if you're getting there from logged in
+      res.redirect('/home');// so that this works only if you're getting there from logged in
     }
     else {
       res.render('pages/login', {message: `Incorrect email or password.`});
@@ -192,8 +165,29 @@ app.post('/login', async (req, res) =>
   }
 });
 
+// PAGE REDIRECTS
 
-//This is how you can get to the other pages and whatnot.
+//Added so that it checks if the user is logged in before getting to the home page
+app.get('/home', (req, res) => 
+{
+  if(req.session.login){
+    res.render('pages/home');
+  }
+  else {
+    res.redirect('/login', {message:"You must be logged in to view the Home Page."});
+  }
+});
+
+app.get('/login', (req, res) => 
+{
+  res.render('pages/login');
+});
+
+app.get('/check-alerts', (req, res) => 
+{
+  res.render('pages/check-alerts'); // Render the report form page
+});
+
 app.get('/alerts', (req, res) => 
 {
   res.render('pages/alerts');
@@ -241,8 +235,11 @@ app.get('/resources', (req, res) => {
   res.render('pages/resources'); // Render the report form page
 });
 
+// PROFILE PAGE THINGS
+
 app.get('/profile', (req, res) => 
 {
+  //if there is a user logged in go to their profile
   if(req.session.user)
   {
     res.render('pages/profile', {
@@ -251,6 +248,7 @@ app.get('/profile', (req, res) =>
       bio: req.session.user.bio
     });
   }
+  //if there is no user logged in - redirect to login page
   else
   {
     res.render('pages/login', {message:'You must sign in to view your profile.'});
@@ -270,38 +268,48 @@ app.post('/editProfile', async (req, res) =>
   var third_response;
 
   // individual cases so that if user leaves a box blank, it will keep the previous data
+
+  //if user edited their name
   if(req.body.name != "")
   {
+    //if it is within length limit add it to their user info
     if(req.body.name.length <= 40) {
       first_response = await db.any(`UPDATE users SET name = $1 WHERE email = $2;`, [req.body.name, req.session.user.email]);
       req.session.user.name = req.body.name;
     }
+    //if it is not within length limit send an error message
     else
     {
       res.redirect('/profile', {message: 'Invalid input. Name must be 40 characters or less', error: true});
     }
   }
 
+  //if user edited their location
   if(req.body.location != "")
   {
+    //if it is within length limit add it to their user info
     if(req.body.location.length <= 50) 
     {
       second_response = await db.any(`UPDATE users SET location = $1 WHERE email = $2;`, [req.body.location, req.session.user.email]);
       req.session.user.location = req.body.location;
     }
+    //if it is not within length limit send an error message
     else 
     {
       res.redirect('/profile', {message: 'Invalid input. Location must be 50 characters or less', error: true});
     }
   }
 
+  //if user edited their bio
   if(req.body.bio != "")
   {
+    //if it is within length limit add it to their user info
     if(req.body.bio.length <= 200) 
     {
       third_response = await db.any(`UPDATE users SET bio = $1 WHERE email = $2`, [req.body.bio, req.session.user.email]);
       req.session.user.bio = req.body.bio;
     }
+    //if it is not within length limit send an error message
     else 
     {
       res.redirect('/profile', {message: 'Invalid input. Bio must be 200 characters or less', error: true});
@@ -321,10 +329,10 @@ app.post('/editProfile', async (req, res) =>
   }
 });
 
-app.get('/logout', (req, res) => {
+app.get('/logout', (req, res) => 
+{
   req.session.destroy();
-  res.render('pages/login');
-  //we should add a message here that says logged out successfully
+  res.render('pages/login', {message:'Logged out successfully.'});
 });
 
 // *****************************************************
