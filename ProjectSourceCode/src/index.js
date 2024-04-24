@@ -143,16 +143,6 @@ app.post('/submit-report', async (req, res) => {
   }
 });
 
-//Added so that it checks if the user is logged in before getting to the home page
-app.get('/home', (req, res) => 
-{
-  if(req.session.login){
-    res.render('pages/home');
-  }
-  else {
-    res.redirect('/login');
-  }
-});
 
 app.post('/login', async (req, res) =>
 {
@@ -201,7 +191,7 @@ app.get('/check-alerts', (req, res) =>
 
 app.get('/alerts', (req, res) => 
 {
-  res.render('pages/alerts');
+  res.render('pages/check-alerts');
 });
 
 app.get('/report', (req, res) => 
@@ -209,14 +199,9 @@ app.get('/report', (req, res) =>
   res.render('pages/report');
 });
 
-app.get('/resources', (req, res) => 
+app.get('/maps', (req, res) => 
 {
-  res.render('pages/resources');
-});
-
-app.get('/map', (req, res) => 
-{
-  res.render('pages/map');
+  res.render('pages/maps');
 });
 
 app.get('/api/incidents', async (req, res) => {
