@@ -143,6 +143,17 @@ app.post('/submit-report', async (req, res) => {
   }
 });
 
+//Added so that it checks if the user is logged in before getting to the home page
+app.get('/home', (req, res) => 
+{
+  if(req.session.login){
+    res.render('pages/home');
+  }
+  else {
+    res.redirect('/login');
+  }
+});
+
 app.post('/login', async (req, res) =>
 {
   let user = await db.oneOrNone('SELECT * FROM users WHERE email = $1 LIMIT 1;', [req.body.email]);
