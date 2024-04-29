@@ -22,6 +22,5 @@ services:
     volumes:
       - ./:/repository
     command: 'npm start'
-    # command: 'npm run testandrun'
 volumes:
   group-project:
